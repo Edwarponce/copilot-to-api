@@ -1,7 +1,49 @@
 # Guide: Convert GitHub Copilot to an OpenAI-Compatible API
 
 ## Introduction
-This guide explains how to use GitHub Copilot through an API compatible with OpenAI's format using direct `curl` commands.
+This guide explains how to use GitHub Copilot through an API compatible with OpenAI's format. You can either use direct `curl` commands or the provided automation scripts.
+
+## 🚀 Quick Start with Automation Scripts
+
+For easier usage, this repository includes automation scripts in Node.js and Python that handle token management automatically:
+
+### Setup
+1. **Get your access token** following Step 1 below (steps 1-3)
+2. **Configure**: Edit `config.json` and replace `YOUR_ACCESS_TOKEN_HERE` with your actual token
+3. **Run**: Use the scripts - they'll handle token refresh automatically!
+
+### Node.js Script
+```bash
+# Get available models
+node copilot-client.js models
+
+# Ask a question
+node copilot-client.js chat "Write a Python function to sort a list"
+
+# Advanced options
+node copilot-client.js chat "Explain recursion" --max-tokens 500 --temperature 0.7
+```
+
+### Python Script
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Get available models
+python copilot_client.py models
+
+# Ask a question
+python copilot_client.py chat "Write a Python function to sort a list"
+
+# Advanced options
+python copilot_client.py chat "Explain recursion" --max-tokens 500 --temperature 0.7
+```
+
+See `examples/usage-examples.md` for more detailed usage examples.
+
+---
+
+## Manual API Usage (Advanced)
 
 ## Prerequisites
 - GitHub account with active Copilot subscription
