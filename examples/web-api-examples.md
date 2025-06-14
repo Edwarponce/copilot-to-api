@@ -1,22 +1,22 @@
-# Ejemplos de uso de los servidores API
+# Web API Servers Usage Examples
 
-## Iniciar los servidores
+## Starting the Servers
 
-### Node.js Server (Puerto 3000)
+### Node.js Server (Port 3000)
 ```bash
 npm install
 npm start
 ```
 
-### Python Server (Puerto 5000)
+### Python Server (Port 5000)
 ```bash
 pip install -r requirements.txt
 python server.py
 ```
 
-## Endpoints OpenAI-Compatible
+## OpenAI-Compatible Endpoints
 
-### 1. Obtener modelos disponibles
+### 1. Get Available Models
 
 ```bash
 # Node.js server
@@ -52,7 +52,7 @@ curl -X POST http://localhost:5000/v1/chat/completions \
   }'
 ```
 
-## Compatibilidad con librerías OpenAI
+## Compatibility with OpenAI Libraries
 
 ### JavaScript/Node.js
 ```javascript
@@ -60,7 +60,7 @@ import OpenAI from 'openai';
 
 const openai = new OpenAI({
   baseURL: 'http://localhost:3000/v1',
-  apiKey: 'dummy-key' // No se usa pero es requerido
+  apiKey: 'dummy-key' // Not used but required
 });
 
 const completion = await openai.chat.completions.create({
@@ -77,9 +77,9 @@ console.log(completion.choices[0].message.content);
 ```python
 import openai
 
-# Configurar cliente para usar nuestro servidor local
+# Configure client to use our local server
 openai.api_base = "http://localhost:5000/v1"
-openai.api_key = "dummy-key"  # No se usa pero es requerido
+openai.api_key = "dummy-key"  # Not used but required
 
 response = openai.ChatCompletion.create(
     model="gpt-4o",
@@ -91,7 +91,7 @@ response = openai.ChatCompletion.create(
 print(response.choices[0].message.content)
 ```
 
-### Python con requests directamente
+### Python with requests directly
 ```python
 import requests
 
@@ -137,9 +137,9 @@ PORT=8080 node server.js
 PORT=8080 python server.py
 ```
 
-### Docker (opcional)
+### Docker (optional)
 ```dockerfile
-# Dockerfile para Node.js
+# Dockerfile for Node.js
 FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
@@ -148,7 +148,7 @@ COPY . .
 EXPOSE 3000
 CMD ["npm", "start"]
 
-# Dockerfile para Python
+# Dockerfile for Python
 FROM python:3.9-alpine
 WORKDIR /app
 COPY requirements.txt ./

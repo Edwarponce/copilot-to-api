@@ -57,6 +57,66 @@ openai.api_key = "dummy-key"
 
 See `examples/web-api-examples.md` for detailed examples and client usage.
 
+## 📚 Available Scripts and Examples
+
+This repository provides multiple ways to interact with GitHub Copilot:
+
+### 🌐 Web API Servers
+- **`server.js`** - Node.js/Express server with OpenAI-compatible endpoints
+- **`server.py`** - Python/Flask server with OpenAI-compatible endpoints
+- **Best for**: Integration with existing applications, web services, OpenAI client libraries
+- **Documentation**: [examples/web-api-examples.md](examples/web-api-examples.md)
+
+### 🖥️ CLI Scripts
+- **`copilot-client.js`** - Node.js command-line client
+- **`copilot_client.py`** - Python command-line client  
+- **Best for**: Quick queries, automation scripts, command-line workflows
+- **Documentation**: [examples/cli-usage-examples.md](examples/cli-usage-examples.md)
+
+### 🔧 Configuration
+- **`config.json`** - Shared configuration file for access tokens
+- **`test-servers.sh`** - Testing script for web servers
+
+### 📖 Examples and Documentation
+| File | Description |
+|------|-------------|
+| [examples/web-api-examples.md](examples/web-api-examples.md) | Complete web API usage examples with curl, OpenAI clients, and integration patterns |
+| [examples/cli-usage-examples.md](examples/cli-usage-examples.md) | CLI scripts examples with automation and scripting use cases |
+
+### 🚀 Quick Start Options
+
+**Option 1: Web API Server**
+```bash
+npm start                           # → http://localhost:3000
+# or
+python server.py                    # → http://localhost:5000
+```
+
+**Option 2: CLI Scripts**
+```bash
+node copilot-client.js chat "Hello world"
+# or  
+python copilot_client.py chat "Hello world"
+```
+
+**Testing & Health Check**
+```bash
+./test-servers.sh                   # Test web servers
+curl http://localhost:3000/health   # Health check
+```
+
+### 🤔 Which Option to Choose?
+
+| Use Case | Web API Server | CLI Scripts |
+|----------|----------------|-------------|
+| **Web applications** | ✅ Perfect | ❌ Not suitable |
+| **OpenAI client libraries** | ✅ Drop-in replacement | ❌ Not compatible |
+| **Quick one-time queries** | ⚠️ Overkill | ✅ Perfect |
+| **Automation scripts** | ⚠️ Extra complexity | ✅ Simple & direct |
+| **Production services** | ✅ Scalable & robust | ❌ Not recommended |
+| **Learning & experimenting** | ⚠️ More setup | ✅ Quick start |
+| **Integration with existing tools** | ✅ Standard HTTP API | ⚠️ Custom integration needed |
+
 ---
 
 ## Manual API Usage (Advanced)
