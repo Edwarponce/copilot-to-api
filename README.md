@@ -3,43 +3,59 @@
 ## Introduction
 This guide explains how to use GitHub Copilot through an API compatible with OpenAI's format. You can either use direct `curl` commands or the provided automation scripts.
 
-## 🚀 Quick Start with Automation Scripts
+## 🚀 Quick Start with OpenAI-Compatible API Servers
 
-For easier usage, this repository includes automation scripts in Node.js and Python that handle token management automatically:
+This repository provides **web servers** that expose GitHub Copilot through OpenAI-compatible endpoints. You can use them with any OpenAI client library!
 
 ### Setup
 1. **Get your access token** following Step 1 below (steps 1-3)
 2. **Configure**: Edit `config.json` and replace `YOUR_ACCESS_TOKEN_HERE` with your actual token
-3. **Run**: Use the scripts - they'll handle token refresh automatically!
+3. **Start a server**: Choose Node.js or Python - both provide the same OpenAI-compatible API!
 
-### Node.js Script
+### Node.js Server (Port 3000)
 ```bash
-# Get available models
-node copilot-client.js models
-
-# Ask a question
-node copilot-client.js chat "Write a Python function to sort a list"
-
-# Advanced options
-node copilot-client.js chat "Explain recursion" --max-tokens 500 --temperature 0.7
+npm install
+npm start
 ```
 
-### Python Script
+### Python Server (Port 5000)
 ```bash
-# Install dependencies
 pip install -r requirements.txt
-
-# Get available models
-python copilot_client.py models
-
-# Ask a question
-python copilot_client.py chat "Write a Python function to sort a list"
-
-# Advanced options
-python copilot_client.py chat "Explain recursion" --max-tokens 500 --temperature 0.7
+python server.py
 ```
 
-See `examples/usage-examples.md` for more detailed usage examples.
+### OpenAI-Compatible Endpoints
+```bash
+# Get available models
+curl http://localhost:3000/v1/models
+
+# Chat completions
+curl -X POST http://localhost:3000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "max_tokens": 1000
+  }'
+```
+
+### Use with OpenAI Libraries
+```javascript
+// JavaScript
+import OpenAI from 'openai';
+const openai = new OpenAI({
+  baseURL: 'http://localhost:3000/v1',
+  apiKey: 'dummy-key'
+});
+```
+
+```python
+# Python
+import openai
+openai.api_base = "http://localhost:5000/v1"
+openai.api_key = "dummy-key"
+```
+
+See `examples/web-api-examples.md` for detailed examples and client usage.
 
 ---
 
