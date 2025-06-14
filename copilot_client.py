@@ -42,8 +42,8 @@ class CopilotAPI:
             if response.status_code == 200:
                 data = response.json()
                 self.copilot_token = data['token']
-                # Los tokens expiran en 25 minutos, guardamos el tiempo de expiración
-                self.token_expiry = datetime.now() + timedelta(minutes=24)  # 24 minutos para ser seguros
+                # Use the expires_at timestamp from the API response (subtract 60 seconds for safety margin)
+                self.token_expiry = datetime.fromtimestamp(data['expires_at'] - 60)
                 print('✅ Copilot token refreshed successfully')
                 return True
             else:

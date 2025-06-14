@@ -65,8 +65,10 @@ class CopilotAPI {
             
             if (response.status === 200) {
                 this.copilotToken = response.data.token;
-                this.tokenExpiry = Date.now() + (24 * 60 * 1000); // 24 minutos
+                // Use the expires_at timestamp from the API response (subtract 60 seconds for safety margin)
+                this.tokenExpiry = (response.data.expires_at * 1000) - (60 * 1000);
                 console.log('✅ Copilot token refreshed successfully');
+                console.log(`🕐 Token expires at: ${new Date(this.tokenExpiry).toISOString()}`);
                 return true;
             } else {
                 console.error('❌ Error refreshing token:', response.data);
@@ -133,7 +135,7 @@ class CopilotAPI {
     }
 }
 
-// Crear servidor Express
+// Create Express server
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -141,16 +143,16 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Crear instancia de CopilotAPI
+// Create CopilotAPI instance
 const copilot = new CopilotAPI();
 
-// Middleware para logging
+// Logging middleware
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
     next();
 });
 
-// Endpoint de salud
+// Health endpoint
 app.get('/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
@@ -159,7 +161,7 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Endpoint para obtener modelos (OpenAI compatible)
+// Get models endpoint (OpenAI compatible)
 app.get('/v1/models', async (req, res) => {
     try {
         const response = await copilot.getModels();
@@ -187,7 +189,7 @@ app.get('/v1/models', async (req, res) => {
     }
 });
 
-// Endpoint para chat completions (OpenAI compatible)
+// Chat completions endpoint (OpenAI compatible)
 app.post('/v1/chat/completions', async (req, res) => {
     try {
         const { messages, max_tokens, temperature, stream, model } = req.body;
@@ -234,7 +236,7 @@ app.post('/v1/chat/completions', async (req, res) => {
     }
 });
 
-// Endpoint raíz con información de la API
+// Root endpoint with API information
 app.get('/', (req, res) => {
     res.json({
         service: 'GitHub Copilot to OpenAI API Bridge',
@@ -249,7 +251,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// Middleware para rutas no encontradas
+// Middleware for 404 routes
 app.use('*', (req, res) => {
     res.status(404).json({
         error: {
@@ -260,7 +262,7 @@ app.use('*', (req, res) => {
     });
 });
 
-// Middleware para manejo de errores
+// Error handling middleware
 app.use((error, req, res, next) => {
     console.error('Unhandled error:', error);
     res.status(500).json({
@@ -272,7 +274,7 @@ app.use((error, req, res, next) => {
     });
 });
 
-// Iniciar servidor
+// Start server
 app.listen(port, () => {
     console.log(`🚀 Copilot API Server running on port ${port}`);
     console.log(`📖 OpenAI-compatible endpoints:`);

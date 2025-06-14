@@ -119,20 +119,20 @@ curl http://localhost:3000/health
 curl http://localhost:5000/health
 ```
 
-## Características
+## Features
 
-- ✅ **Endpoints OpenAI-compatible**: `/v1/models` y `/v1/chat/completions`
-- ✅ **Auto-refresh de tokens**: Los servidores manejan automáticamente la renovación de tokens
-- ✅ **CORS habilitado**: Permite requests desde navegadores web
-- ✅ **Manejo de errores**: Respuestas de error en formato OpenAI
-- ✅ **Logging**: Registro de todas las requests
-- ✅ **Health checks**: Endpoint para verificar el estado del servicio
+- ✅ **OpenAI-compatible endpoints**: `/v1/models` and `/v1/chat/completions`
+- ✅ **Smart token management**: Uses `expires_at` from API response for precise token refresh timing
+- ✅ **CORS enabled**: Allows requests from web browsers
+- ✅ **Error handling**: OpenAI-format error responses
+- ✅ **Logging**: All requests are logged with timestamps
+- ✅ **Health checks**: Endpoint for service monitoring
 
-## Configuración de producción
+## Production configuration
 
-### Variables de entorno
+### Environment variables
 ```bash
-# Puerto personalizado
+# Custom port
 PORT=8080 node server.js
 PORT=8080 python server.py
 ```

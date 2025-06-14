@@ -66,8 +66,8 @@ class CopilotAPI {
             
             if (response.status === 200) {
                 this.copilotToken = response.data.token;
-                // Los tokens expiran en 25 minutos, guardamos el tiempo de expiración
-                this.tokenExpiry = Date.now() + (24 * 60 * 1000); // 24 minutos para ser seguros
+                // Use the expires_at timestamp from the API response (subtract 60 seconds for safety margin)
+                this.tokenExpiry = (response.data.expires_at * 1000) - (60 * 1000);
                 console.log('✅ Copilot token refreshed successfully');
                 return true;
             } else {

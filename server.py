@@ -43,8 +43,10 @@ class CopilotAPI:
             if response.status_code == 200:
                 data = response.json()
                 self.copilot_token = data['token']
-                self.token_expiry = datetime.now() + timedelta(minutes=24)  # 24 minutos
+                # Use the expires_at timestamp from the API response (subtract 60 seconds for safety margin)
+                self.token_expiry = datetime.fromtimestamp(data['expires_at'] - 60)
                 print('✅ Copilot token refreshed successfully')
+                print(f'🕐 Token expires at: {self.token_expiry.isoformat()}')
                 return True
             else:
                 print(f'❌ Error refreshing token: {response.text}')
@@ -108,19 +110,19 @@ class CopilotAPI:
         }
 
 
-# Crear aplicación Flask
+# Create Flask application
 app = Flask(__name__)
 CORS(app)
 
-# Crear instancia de CopilotAPI
+# Create CopilotAPI instance
 copilot = CopilotAPI()
 
-# Middleware para logging
+# Logging middleware
 @app.before_request
 def log_request():
     print(f"{datetime.now().isoformat()} - {request.method} {request.path}")
 
-# Endpoint de salud
+# Health endpoint
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({
@@ -129,7 +131,7 @@ def health():
         'service': 'copilot-api-server-python'
     })
 
-# Endpoint para obtener modelos (OpenAI compatible)
+# Get models endpoint (OpenAI compatible)
 @app.route('/v1/models', methods=['GET'])
 def get_models():
     try:
@@ -155,7 +157,7 @@ def get_models():
             }
         }), 500
 
-# Endpoint para chat completions (OpenAI compatible)
+# Chat completions endpoint (OpenAI compatible)
 @app.route('/v1/chat/completions', methods=['POST'])
 def chat_completions():
     try:
@@ -209,7 +211,7 @@ def chat_completions():
             }
         }), 500
 
-# Endpoint raíz con información de la API
+# Root endpoint with API information
 @app.route('/', methods=['GET'])
 def root():
     return jsonify({
@@ -224,7 +226,7 @@ def root():
         'note': 'This service provides OpenAI-compatible endpoints for GitHub Copilot'
     })
 
-# Manejo de rutas no encontradas
+# Handle 404 routes
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
@@ -235,7 +237,7 @@ def not_found(error):
         }
     }), 404
 
-# Manejo de errores generales
+# Handle general errors
 @app.errorhandler(500)
 def internal_error(error):
     return jsonify({
