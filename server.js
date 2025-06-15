@@ -21,19 +21,25 @@ class CopilotAPI {
         }
     }
 
-    async makeRequest(options, data = null) {
+    async makeRequest(options, data = null, isStream = false) {
         return new Promise((resolve, reject) => {
             const req = https.request(options, (res) => {
-                let body = '';
-                res.on('data', chunk => body += chunk);
-                res.on('end', () => {
-                    try {
-                        const response = JSON.parse(body);
-                        resolve({ status: res.statusCode, data: response });
-                    } catch (error) {
-                        resolve({ status: res.statusCode, data: body });
-                    }
-                });
+                if (isStream) {
+                    // For streaming, return the response object directly
+                    resolve({ status: res.statusCode, stream: res });
+                } else {
+                    // For non-streaming, accumulate data as before
+                    let body = '';
+                    res.on('data', chunk => body += chunk);
+                    res.on('end', () => {
+                        try {
+                            const response = JSON.parse(body);
+                            resolve({ status: res.statusCode, data: response });
+                        } catch (error) {
+                            resolve({ status: res.statusCode, data: body });
+                        }
+                    });
+                }
             });
 
             req.on('error', reject);
@@ -130,7 +136,7 @@ class CopilotAPI {
             }
         };
 
-        const response = await this.makeRequest(httpOptions, requestData);
+        const response = await this.makeRequest(httpOptions, requestData, options.stream);
         return response;
     }
 }
@@ -213,16 +219,53 @@ app.post('/v1/chat/completions', async (req, res) => {
 
         const response = await copilot.chatCompletion(messages, options);
         
-        if (response.status === 200) {
-            res.json(response.data);
+        if (options.stream) {
+            // Handle streaming response
+            if (response.status === 200) {
+                // Set SSE headers
+                res.writeHead(200, {
+                    'Content-Type': 'text/event-stream',
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Cache-Control'
+                });
+
+                // Pipe the stream directly to the client
+                response.stream.on('data', (chunk) => {
+                    res.write(chunk);
+                });
+
+                response.stream.on('end', () => {
+                    res.end();
+                });
+
+                response.stream.on('error', (error) => {
+                    console.error('Streaming error:', error);
+                    res.end();
+                });
+            } else {
+                res.status(response.status).json({
+                    error: {
+                        message: response.data || 'Streaming request failed',
+                        type: 'api_error',
+                        code: response.status
+                    }
+                });
+            }
         } else {
-            res.status(response.status).json({
-                error: {
-                    message: response.data,
-                    type: 'api_error',
-                    code: response.status
-                }
-            });
+            // Handle non-streaming response (as before)
+            if (response.status === 200) {
+                res.json(response.data);
+            } else {
+                res.status(response.status).json({
+                    error: {
+                        message: response.data,
+                        type: 'api_error',
+                        code: response.status
+                    }
+                });
+            }
         }
     } catch (error) {
         console.error('Error in /v1/chat/completions:', error);

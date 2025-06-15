@@ -6,7 +6,7 @@ import requests
 import os
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 
 class CopilotAPI:
@@ -98,16 +98,28 @@ class CopilotAPI:
             'content-type': 'application/json'
         }
 
-        response = requests.post(
-            'https://api.githubcopilot.com/chat/completions',
-            headers=headers,
-            json=request_data
-        )
-
-        return {
-            'status': response.status_code,
-            'data': response.json() if response.status_code == 200 else response.text
-        }
+        # Handle streaming vs non-streaming differently
+        if options.get('stream', False):
+            response = requests.post(
+                'https://api.githubcopilot.com/chat/completions',
+                headers=headers,
+                json=request_data,
+                stream=True  # Enable streaming
+            )
+            return {
+                'status': response.status_code,
+                'stream': response
+            }
+        else:
+            response = requests.post(
+                'https://api.githubcopilot.com/chat/completions',
+                headers=headers,
+                json=request_data
+            )
+            return {
+                'status': response.status_code,
+                'data': response.json() if response.status_code == 200 else response.text
+            }
 
 
 # Create Flask application
@@ -191,16 +203,48 @@ def chat_completions():
 
         response = copilot.chat_completion(messages, options)
         
-        if response['status'] == 200:
-            return jsonify(response['data'])
+        if options.get('stream', False):
+            # Handle streaming response
+            if response['status'] == 200:
+                def generate_stream():
+                    try:
+                        for chunk in response['stream'].iter_content(chunk_size=None, decode_unicode=False):
+                            if chunk:
+                                yield chunk
+                    except Exception as e:
+                        print(f'Streaming error: {e}')
+                        yield b''
+
+                return Response(
+                    generate_stream(),
+                    mimetype='text/event-stream',
+                    headers={
+                        'Cache-Control': 'no-cache',
+                        'Connection': 'keep-alive',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Cache-Control'
+                    }
+                )
+            else:
+                return jsonify({
+                    'error': {
+                        'message': response.get('data', 'Streaming request failed'),
+                        'type': 'api_error',
+                        'code': response['status']
+                    }
+                }), response['status']
         else:
-            return jsonify({
-                'error': {
-                    'message': response['data'],
-                    'type': 'api_error',
-                    'code': response['status']
-                }
-            }), response['status']
+            # Handle non-streaming response (as before)
+            if response['status'] == 200:
+                return jsonify(response['data'])
+            else:
+                return jsonify({
+                    'error': {
+                        'message': response['data'],
+                        'type': 'api_error',
+                        'code': response['status']
+                    }
+                }), response['status']
     except Exception as e:
         print(f'Error in /v1/chat/completions: {e}')
         return jsonify({
