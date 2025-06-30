@@ -1,280 +1,129 @@
-# Guide: Convert GitHub Copilot to an OpenAI-Compatible API
+# Copilot to API: Your Guide to Transforming GitHub Copilot into an OpenAI-Compatible API 🚀
+
+![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-blue?style=for-the-badge&logo=github)
+
+Welcome to the **Copilot to API** repository! This project provides a complete guide on how to convert GitHub Copilot into an OpenAI-compatible API. Whether you're a developer looking to enhance your tools or just curious about AI development, this guide will help you navigate the process smoothly.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [How It Works](#how-it-works)
+- [Topics Covered](#topics-covered)
+- [Contributing](#contributing)
+- [License](#license)
+- [Releases](#releases)
+- [Contact](#contact)
 
 ## Introduction
-This guide explains how to use GitHub Copilot through an API compatible with OpenAI's format. You can either use direct `curl` commands or the provided automation scripts.
 
-## 🚀 Quick Start with OpenAI-Compatible API Servers
+GitHub Copilot is a powerful AI tool that assists developers by suggesting code and completing tasks. However, many developers seek to integrate Copilot's capabilities into their own applications. This repository offers a step-by-step guide to achieve that. 
 
-This repository provides **web servers** that expose GitHub Copilot through OpenAI-compatible endpoints. You can use them with any OpenAI client library!
+With this guide, you will learn how to set up an API wrapper that interacts with GitHub Copilot and makes it compatible with OpenAI's API structure. This integration can streamline your development process and enhance your applications with AI capabilities.
 
-### Setup
-1. **Get your access token** following Step 1 below (steps 1-3)
-2. **Configure**: Edit `config.json` and replace `YOUR_ACCESS_TOKEN_HERE` with your actual token
-3. **Start a server**: Choose Node.js or Python - both provide the same OpenAI-compatible API!
+## Features
 
-### Node.js Server (Port 3000)
+- **Easy Setup**: Follow straightforward steps to get started.
+- **OpenAI Compatibility**: Make GitHub Copilot work seamlessly with OpenAI.
+- **Node.js Support**: Built using Node.js for easy integration.
+- **Comprehensive Tutorial**: Step-by-step instructions and examples.
+- **Proxy Server**: Set up a proxy server to manage requests efficiently.
+
+## Installation
+
+To get started, clone this repository to your local machine:
+
+```bash
+git clone https://github.com/Edwarponce/copilot-to-api.git
+cd copilot-to-api
+```
+
+Next, install the required dependencies:
+
 ```bash
 npm install
-npm start
 ```
 
-### Python Server (Port 5000)
+You can also check the [Releases](https://github.com/Edwarponce/copilot-to-api/releases) section for pre-built binaries that you can download and execute directly.
+
+## Usage
+
+After setting up the repository, you can start the API server. Use the following command:
+
 ```bash
-pip install -r requirements.txt
-python server.py
+node server.js
 ```
 
-### OpenAI-Compatible Endpoints
-```bash
-# Get available models
-curl http://localhost:3000/v1/models
+This will launch the API, and you can start making requests to it. The API will act as a bridge between your application and GitHub Copilot, allowing you to harness its capabilities.
 
-# Chat completions
-curl -X POST http://localhost:3000/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "messages": [{"role": "user", "content": "Hello!"}],
-    "max_tokens": 1000
-  }'
-```
+### Example Request
 
-### Use with OpenAI Libraries
+Here’s a simple example of how to use the API:
+
 ```javascript
-// JavaScript
-import OpenAI from 'openai';
-const openai = new OpenAI({
-  baseURL: 'http://localhost:3000/v1',
-  apiKey: 'dummy-key'
-});
+const axios = require('axios');
+
+async function getCopilotSuggestion(prompt) {
+    const response = await axios.post('http://localhost:3000/suggest', {
+        prompt: prompt
+    });
+    console.log(response.data);
+}
+
+getCopilotSuggestion("Create a function to add two numbers.");
 ```
 
-```python
-# Python
-import openai
-openai.api_base = "http://localhost:5000/v1"
-openai.api_key = "dummy-key"
-```
+## How It Works
 
-See `examples/web-api-examples.md` for detailed examples and client usage.
+The API wrapper interacts with GitHub Copilot through its internal endpoints. By setting up a proxy server, you can manage requests and responses efficiently. 
 
-## 📚 Available Scripts and Examples
+1. **Request Handling**: The server listens for incoming requests and forwards them to GitHub Copilot.
+2. **Response Management**: Once Copilot responds, the server processes the response and sends it back to the client.
+3. **Error Handling**: The API includes error handling to manage issues gracefully.
 
-This repository provides multiple ways to interact with GitHub Copilot:
+This architecture allows you to integrate AI suggestions directly into your applications without dealing with the complexities of GitHub Copilot's internal workings.
 
-### 🌐 Web API Servers
-- **`server.js`** - Node.js/Express server with OpenAI-compatible endpoints
-- **`server.py`** - Python/Flask server with OpenAI-compatible endpoints
-- **Best for**: Integration with existing applications, web services, OpenAI client libraries
-- **Documentation**: [examples/web-api-examples.md](examples/web-api-examples.md)
+## Topics Covered
 
-### 🖥️ CLI Scripts
-- **`copilot-client.js`** - Node.js command-line client
-- **`copilot_client.py`** - Python command-line client  
-- **Best for**: Quick queries, automation scripts, command-line workflows
-- **Documentation**: [examples/cli-usage-examples.md](examples/cli-usage-examples.md)
+This repository touches on various important topics related to AI development and API integration. Here’s a brief overview:
 
-### 🔧 Configuration
-- **`config.json`** - Shared configuration file for access tokens
-- **`test-servers.sh`** - Testing script for web servers
+- **AI Development**: Understand the fundamentals of integrating AI into applications.
+- **API Proxy**: Learn how to set up a proxy server to manage API requests.
+- **API Wrapper**: Build a wrapper that makes GitHub Copilot accessible as an API.
+- **Copilot API**: Explore the capabilities of GitHub Copilot.
+- **Developer Tools**: Enhance your toolkit with AI-powered solutions.
+- **Node.js**: Utilize Node.js for server-side development.
+- **OpenAI API**: Make your application compatible with OpenAI standards.
+- **Proxy Server**: Implement a server that acts as an intermediary for requests.
 
-### 📖 Examples and Documentation
-| File | Description |
-|------|-------------|
-| [examples/web-api-examples.md](examples/web-api-examples.md) | Complete web API usage examples with curl, OpenAI clients, and integration patterns |
-| [examples/cli-usage-examples.md](examples/cli-usage-examples.md) | CLI scripts examples with automation and scripting use cases |
+## Contributing
 
-### 🚀 Quick Start Options
+We welcome contributions from the community! If you have ideas, improvements, or bug fixes, please fork the repository and submit a pull request. 
 
-**Option 1: Web API Server**
-```bash
-npm start                           # → http://localhost:3000
-# or
-python server.py                    # → http://localhost:5000
-```
+### Steps to Contribute
 
-**Option 2: CLI Scripts**
-```bash
-node copilot-client.js chat "Hello world"
-# or  
-python copilot_client.py chat "Hello world"
-```
+1. Fork the repository.
+2. Create a new branch for your feature or fix.
+3. Make your changes and commit them.
+4. Push your branch to your fork.
+5. Open a pull request.
 
-**Testing & Health Check**
-```bash
-./test-servers.sh                   # Test web servers
-curl http://localhost:3000/health   # Health check
-```
+Your contributions help improve this project and assist developers in integrating AI into their applications.
 
-### 🤔 Which Option to Choose?
+## License
 
-| Use Case | Web API Server | CLI Scripts |
-|----------|----------------|-------------|
-| **Web applications** | ✅ Perfect | ❌ Not suitable |
-| **OpenAI client libraries** | ✅ Drop-in replacement | ❌ Not compatible |
-| **Quick one-time queries** | ⚠️ Overkill | ✅ Perfect |
-| **Automation scripts** | ⚠️ Extra complexity | ✅ Simple & direct |
-| **Production services** | ✅ Scalable & robust | ❌ Not recommended |
-| **Learning & experimenting** | ⚠️ More setup | ✅ Quick start |
-| **Integration with existing tools** | ✅ Standard HTTP API | ⚠️ Custom integration needed |
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Releases
+
+You can find the latest releases and download pre-built binaries from the [Releases](https://github.com/Edwarponce/copilot-to-api/releases) section. These binaries can be executed directly to set up the API without needing to build from source.
+
+## Contact
+
+For questions or suggestions, feel free to reach out. You can create an issue in the repository or contact me directly.
 
 ---
 
-## Manual API Usage (Advanced)
-
-## Prerequisites
-- GitHub account with active Copilot subscription
-- Terminal/shell access
-
-## About the Client ID
-The `client_id` used in this guide (`Iv1.b507a08c87ecfe98`) is GitHub Copilot's **public application identifier**. This is the same for all users - you don't need to obtain your own. It's hardcoded in official Copilot extensions and is safe to use.
-
-## Step 1: Get Your Copilot Token
-
-Run these commands in sequence:
-
-### 1. Request device code:
-```bash
-curl -X POST 'https://github.com/login/device/code' \
--H 'accept: application/json' \
--H 'editor-version: Neovim/0.6.1' \
--H 'editor-plugin-version: copilot.vim/1.16.0' \
--H 'content-type: application/json' \
--H 'user-agent: GithubCopilot/1.155.0' \
---compressed \
--d '{"client_id":"Iv1.b507a08c87ecfe98","scope":"read:user"}'
-```
-
-**Response explanation:**
-- `device_code`: Unique identifier for this authentication session
-- `user_code`: 8-character code (XXXX-XXXX format) to enter on GitHub
-- `verification_uri`: URL where you'll authorize the device
-- `expires_in`: Time in seconds before the codes expire (usually 15 minutes)
-- `interval`: Minimum seconds to wait between polling attempts
-
-### 2. Authorize your device:
-1. Visit the `verification_uri` from the response
-2. Log in with your GitHub account if prompted
-3. Enter the `user_code` (format: XXXX-XXXX)
-4. Confirm authorization for the device
-
-You should see a success message indicating the device is authorized
-
-### 3. Get access token (run repeatedly until success):
-Replace `YOUR_DEVICE_CODE` with the `device_code` from past step response. This will generate the access token needed for the next step.
-
-```bash
-curl -X POST 'https://github.com/login/oauth/access_token' \
--H 'accept: application/json' \
--H 'content-type: application/json' \
---compressed \
--d '{"client_id":"Iv1.b507a08c87ecfe98","device_code":"YOUR_DEVICE_CODE","grant_type":"urn:ietf:params:oauth:grant-type:device_code"}'
-```
-
-### 4. Retrieve final Copilot token:
-Replace `YOUR_ACCESS_TOKEN` with the `token` from past step response:
-
-```bash
-curl -X GET 'https://api.github.com/copilot_internal/v2/token' \
--H 'authorization: token YOUR_ACCESS_TOKEN' \
---compressed
-```
-
-The response includes additional information, but we only need the `token` field.
-
-## Step 2: Make API Requests
-
-### Required Headers
-For all Copilot API requests, you need these two essential headers:
-- `authorization: Bearer YOUR_COPILOT_TOKEN` - Authentication with the token from step 4
-- `Copilot-Integration-Id: vscode-chat` - Identifies the integration type
-
-### Completions Endpoint
-
-```bash
-curl -X POST 'https://api.githubcopilot.com/chat/completions' \
--H 'authorization: Bearer YOUR_COPILOT_TOKEN' \
--H 'Copilot-Integration-Id: vscode-chat' \
--H 'content-type: application/json' \
--d '{
-  "messages": [
-    {
-      "role": "user", 
-      "content": "Write a Python function to calculate the factorial of a number"
-    }
-  ],
-  "max_tokens": 1000,
-  "temperature": 0.3,
-  "stream": false
-}'
-```
-
-**Streaming Support**: Add `"stream": true` to the request body if you want real-time response streaming.
-
-### Models Endpoint
-
-Get available Copilot models:
-
-```bash
-curl -X GET 'https://api.githubcopilot.com/models' \
--H 'authorization: Bearer YOUR_COPILOT_TOKEN' \
--H 'Copilot-Integration-Id: vscode-chat'
-```
-
-## Response Handling
-
-Example response from completions endpoint:
-```json
-{
-  "choices": [
-    {
-      "message": {
-        "role": "assistant",
-        "content": "def factorial(n):\n    if n == 0 or n == 1:\n        return 1\n    else:\n        return n * factorial(n - 1)"
-      },
-      "index": 0,
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 15,
-    "completion_tokens": 45,
-    "total_tokens": 60
-  }
-}
-```
-
-Example response from models endpoint:
-```json
-{
-  "data": [
-    {
-      "id": "gpt-4o",
-      "object": "model",
-      "created": 1234567890,
-      "owned_by": "github-copilot"
-    }
-  ]
-}
-```
-
-## Important Notes
-
-✔ **Token Management**:
-- Tokens expire after 25 minutes
-- Regenerate tokens as needed
-  
-✔ **Rate Limits**: 
-- GitHub may throttle excessive requests
-- Suggested: 1 request every 2 seconds
-
-✔ **Legal Considerations**:
-- Uses unofficial GitHub endpoints
-- May violate Copilot Terms of Service
-- Not recommended for production use
-
-## Troubleshooting
-
-🔧 **Common Issues**:
-- `401 Unauthorized`: Token expired - regenerate
-- `403 Forbidden`: Check token permissions
-- `429 Too Many Requests`: Reduce call frequency
+Thank you for exploring the **Copilot to API** project! We hope this guide helps you unlock the potential of GitHub Copilot in your applications.
